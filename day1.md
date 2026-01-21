@@ -295,10 +295,15 @@ man shadow
 /etc/skel/         # Squelette du home directory
 
 
-day1 write up
-Creating Linux Users with Non-Interactive Shells
-ssh banner@172.16.238.12
-sudo su
-cat /etc/passwd | grep jim
-adduser jim -s /sbin/nologin
-cat /etc/passwd | grep nologin
+## day1 write up
+# Creating Linux Users with Non-Interactive Shells
+- ssh banner@172.16.238.12
+- sudo su
+- cat /etc/passwd | grep jim
+- adduser jim -s /sbin/nologin
+- cat /etc/passwd | grep nologin
+## day2 write up
+# Creating Linux Users with Temporary User Setup with Expiry
+- ssh steve@stapp02.stratos.xfusioncorp.com
+- sudo su -
+- useradd kareem -e 2027-04-15
