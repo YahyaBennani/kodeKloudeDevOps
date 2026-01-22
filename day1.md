@@ -599,8 +599,6 @@ SSH est **un composant critique de la sécurité système**. Un mauvais durcisse
 
 ---
 
-✍️ Auteur : Yahya
-📚 Niveau : Admin Sys / DevSecOps / CEH / Blue Team
 
 ## day3 write up
 
