@@ -307,3 +307,304 @@ man shadow
 - ssh steve@stapp02.stratos.xfusioncorp.com
 - sudo su -
 - useradd kareem -e 2027-04-15
+# ssh
+# 📘 Cours Complet SSH (Secure Shell)
+
+## 🎯 Objectifs du cours
+
+Ce cours a pour but de vous donner **une maîtrise complète de SSH** :
+
+* Comprendre le fonctionnement interne de SSH
+* Maîtriser **toutes les options importantes** côté client et serveur
+* Mettre en place un **hardening SSH professionnel** (niveau DevSecOps / CEH / Admin Sys)
+* Appliquer les **bonnes pratiques sécurité (CIS, ANSSI, NIST)**
+
+---
+
+## 1️⃣ Introduction à SSH
+
+### 🔐 Qu’est-ce que SSH ?
+
+SSH (Secure Shell) est un protocole réseau sécurisé permettant :
+
+* Connexion distante sécurisée
+* Exécution de commandes à distance
+* Transfert de fichiers sécurisé
+* Tunneling et port forwarding
+
+➡️ Il remplace **Telnet**, **rlogin**, **FTP** (non sécurisés).
+
+### 📡 Ports et protocoles
+
+* Port par défaut : **22/TCP**
+* Basé sur TCP
+* Chiffrement asymétrique + symétrique
+
+---
+
+## 2️⃣ Architecture SSH
+
+### 🔄 Modèle Client / Serveur
+
+* **Client SSH** : `ssh`, `scp`, `sftp`
+* **Serveur SSH** : `sshd`
+
+### 📁 Fichiers importants
+
+| Fichier                | Rôle                             |
+| ---------------------- | -------------------------------- |
+| /etc/ssh/sshd_config   | Configuration serveur            |
+| /etc/ssh/ssh_config    | Configuration client globale     |
+| ~/.ssh/config          | Configuration client utilisateur |
+| ~/.ssh/authorized_keys | Clés autorisées                  |
+| ~/.ssh/known_hosts     | Empreintes serveurs              |
+
+---
+
+## 3️⃣ Mécanismes de chiffrement SSH
+
+### 🔑 Types de chiffrement
+
+#### 1. Chiffrement asymétrique
+
+* RSA
+* ECDSA
+* Ed25519 (🔥 recommandé)
+
+#### 2. Chiffrement symétrique (session)
+
+* AES
+* ChaCha20
+
+#### 3. Intégrité
+
+* HMAC-SHA2
+
+---
+
+## 4️⃣ Authentification SSH
+
+### 🔑 Authentification par mot de passe
+
+```text
+PasswordAuthentication yes
+```
+
+❌ Vulnérable au brute-force
+
+### 🔐 Authentification par clé SSH (recommandée)
+
+```bash
+ssh-keygen -t ed25519
+ssh-copy-id user@server
+```
+
+```text
+PubkeyAuthentication yes
+```
+
+---
+
+## 5️⃣ Options principales de sshd_config
+
+### 🔒 Accès root
+
+```text
+PermitRootLogin no
+```
+
+### 🔑 Méthodes d’authentification
+
+```text
+PasswordAuthentication no
+PubkeyAuthentication yes
+KbdInteractiveAuthentication no
+ChallengeResponseAuthentication no
+```
+
+### 👥 Contrôle d’accès utilisateurs
+
+```text
+AllowUsers user1 user2
+AllowGroups sshusers
+DenyUsers test guest
+```
+
+### 🕒 Timeout et sessions
+
+```text
+LoginGraceTime 30
+ClientAliveInterval 300
+ClientAliveCountMax 2
+MaxSessions 2
+MaxAuthTries 3
+```
+
+---
+
+## 6️⃣ Hardening SSH (sécurisation avancée)
+
+### 🛡️ Désactiver protocoles faibles
+
+```text
+Protocol 2
+```
+
+### 🔐 Chiffres sécurisés
+
+```text
+Ciphers chacha20-poly1305@openssh.com,aes256-gcm@openssh.com
+MACs hmac-sha2-512-etm@openssh.com
+KexAlgorithms curve25519-sha256
+```
+
+### 🔎 Bannière légale
+
+```text
+Banner /etc/issue.net
+```
+
+### 🧱 Limiter forwarding
+
+```text
+AllowTcpForwarding no
+X11Forwarding no
+PermitTunnel no
+```
+
+---
+
+## 7️⃣ SSH Client Hardening
+
+### 📄 ~/.ssh/config
+
+```text
+Host *
+    ServerAliveInterval 60
+    ServerAliveCountMax 2
+    HashKnownHosts yes
+    IdentitiesOnly yes
+```
+
+---
+
+## 8️⃣ Port Forwarding SSH
+
+### 🔁 Local forwarding
+
+```bash
+ssh -L 8080:localhost:80 user@server
+```
+
+### 🔁 Remote forwarding
+
+```bash
+ssh -R 9000:localhost:9000 user@server
+```
+
+### 🔁 Dynamic (SOCKS proxy)
+
+```bash
+ssh -D 1080 user@server
+```
+
+---
+
+## 9️⃣ SFTP & SCP
+
+### 📂 SCP
+
+```bash
+scp file.txt user@server:/tmp
+```
+
+### 📂 SFTP sécurisé
+
+```bash
+Subsystem sftp internal-sftp
+```
+
+---
+
+## 🔟 Journaux & audit SSH
+
+### 📜 Logs
+
+```bash
+/var/log/auth.log
+/var/log/secure
+```
+
+### 🔍 Augmenter la verbosité
+
+```text
+LogLevel VERBOSE
+```
+
+---
+
+## 1️⃣1️⃣ Protection contre attaques
+
+### 🔨 Fail2Ban
+
+* Bloque brute-force SSH
+
+### 🔐 Changer le port SSH
+
+```text
+Port 2222
+```
+
+### 🧱 Firewall
+
+```bash
+ufw allow 2222/tcp
+```
+
+---
+
+## 1️⃣2️⃣ Conformité Sécurité
+
+### 📘 CIS Benchmarks
+
+* Disable root login
+* Disable password auth
+* Strong crypto only
+* Logging enabled
+
+### 📘 ANSSI / NIST
+
+* MFA recommandé
+* Bastion SSH
+
+---
+
+## 1️⃣3️⃣ Checklist SSH Hardening (audit-ready)
+
+* [ ] PermitRootLogin no
+* [ ] PasswordAuthentication no
+* [ ] Clés Ed25519
+* [ ] Fail2Ban actif
+* [ ] Port non standard
+* [ ] Logs activés
+* [ ] Firewall restrictif
+
+---
+
+## 📌 Conclusion
+
+SSH est **un composant critique de la sécurité système**. Un mauvais durcissement = accès root distant.
+
+➡️ En cybersécurité, **SSH mal configuré = compromission totale**.
+
+---
+
+✍️ Auteur : Yahya
+📚 Niveau : Admin Sys / DevSecOps / CEH / Blue Team
+
+## day3 write up
+
+- sudo nano /etc/ssh/sshd_config
+- #PermitRootLogin yes --> PermitRootLogin no
+- sudo sshd -t (test) si aucune sortie --> OK
+- if not --> sudo systemctl restart ssh
