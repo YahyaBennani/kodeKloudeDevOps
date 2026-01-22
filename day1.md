@@ -360,7 +360,8 @@ SSH (Secure Shell) est un protocole réseau sécurisé permettant :
 | ~/.ssh/known_hosts     | Empreintes serveurs              |
 
 ---
-
+clien c a d moi quand je tent a se connecter a une autre machine 
+server lorsque les autres essaye de se connecter a ma machine
 ## 3️⃣ Mécanismes de chiffrement SSH
 
 ### 🔑 Types de chiffrement
@@ -601,7 +602,7 @@ SSH est **un composant critique de la sécurité système**. Un mauvais durcisse
 
 
 ## day3 write up
-
+# disable direct SSH root login
 - sudo nano /etc/ssh/sshd_config
 - #PermitRootLogin yes --> PermitRootLogin no
 - sudo sshd -t (test) si aucune sortie --> OK
