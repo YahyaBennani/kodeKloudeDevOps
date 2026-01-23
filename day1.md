@@ -607,3 +607,223 @@ SSH est **un composant critique de la sécurité système**. Un mauvais durcisse
 - #PermitRootLogin yes --> PermitRootLogin no
 - sudo sshd -t (test) si aucune sortie --> OK
 - if not --> sudo systemctl restart ssh
+# Guide des Répertoires Système Linux et Commandes de Gestion des Permissions
+
+## Table des Répertoires Système Linux
+
+### 📁 **/tmp** - Répertoire Temporaire
+- **Objectif** : Stockage temporaire de fichiers
+- **Caractéristiques** :
+  - Accessible par tous les utilisateurs
+  - Les fichiers sont généralement supprimés au redémarrage
+  - Permissions par défaut : `drwxrwxrwt` (sticky bit activé)
+- **Usage typique** : Fichiers temporaires, cache, verrous
+- **Exemple** : `/tmp/xfusioncorp.sh` dans notre scénario
+
+### ⚙️ **/etc** - Configuration Système
+- **Objectif** : Fichiers de configuration
+- **Contenu** :
+  - Fichiers de configuration système et applicatifs
+  - Scripts d'initialisation
+  - Tables de configuration réseau
+- **Exemples** :
+  - `/etc/passwd` : informations utilisateurs
+  - `/etc/fstab` : points de montage
+  - `/etc/hosts` : résolution de noms locale
+
+### 🔧 **/bin** - Binaires Essentiels
+- **Objectif** : Commandes système essentielles
+- **Caractéristiques** :
+  - Commandes disponibles en mode mono-utilisateur
+  - Accessibles à tous les utilisateurs
+  - Liens vers `/usr/bin` sur les distributions modernes
+- **Exemples** : `ls`, `cp`, `mv`, `chmod`, `bash`
+
+### 🔄 **/usr** - Données Utilisateur
+- **Objectif** : Applications et données utilisateur
+- **Sous-répertoires** :
+  - `/usr/bin` : commandes utilisateur
+  - `/usr/sbin` : commandes administratives
+  - `/usr/lib` : bibliothèques
+  - `/usr/share` : données partagées
+
+### 🏠 **/home** - Répertoires Utilisateurs
+- **Objectif** : Dossiers personnels des utilisateurs
+- **Structure** : `/home/nom_utilisateur/`
+- **Permissions** : Chaque utilisateur est propriétaire de son /home/
+
+### 👑 **/root** - Home de l'Administrateur
+- **Objectif** : Répertoire personnel de root
+- **Différence avec /home** : Séparé pour des raisons de sécurité
+
+### 📦 **/var** - Données Variables
+- **Objectif** : Fichiers qui changent fréquemment
+- **Contenu** :
+  - `/var/log` : fichiers de log
+  - `/var/spool` : files d'attente (emails, impressions)
+  - `/var/www` : sites web (Apache/Nginx)
+
+### 🔧 **/dev** - Fichiers Périphériques
+- **Objectif** : Points d'accès aux périphériques
+- **Exemples** :
+  - `/dev/sda` : disque dur principal
+  - `/dev/null` : périphérique "poubelle"
+  - `/dev/tty` : terminal
+
+### 📌 **/proc** et **/sys** - Interfaces Kernel
+- **/proc** : Informations système et processus en temps réel
+- **/sys** : Informations sur le matériel et pilotes
+
+---
+
+## 🔐 Commandes de Gestion des Permissions
+
+### 1. **chmod** - Modifier les Permissions
+```bash
+# Syntaxe de base
+chmod [options] mode fichier
+```
+
+#### **Modes de permission** :
+- **u** : utilisateur (user)
+- **g** : groupe (group)
+- **o** : autres (others)
+- **a** : tous (all)
+
+#### **Permissions** :
+- **r** : lecture (read) - valeur 4
+- **w** : écriture (write) - valeur 2
+- **x** : exécution (execute) - valeur 1
+
+#### **Méthodes de notation** :
+
+**Méthode symbolique** :
+```bash
+# Ajouter l'exécution pour tous
+chmod a+x fichier.sh
+
+# Enlever l'écriture pour le groupe
+chmod g-w fichier.txt
+
+# Définir des permissions spécifiques
+chmod u=rwx,g=rx,o=r fichier.sh
+```
+
+**Méthode octale (chiffrée)** :
+```bash
+# 755 : rwxr-xr-x
+chmod 755 script.sh
+
+# 644 : rw-r--r--
+chmod 644 fichier.txt
+
+# 777 : rwxrwxrwx (dangereux !)
+chmod 777 fichier
+```
+
+#### **Options courantes** :
+```bash
+# Récursif (répertoires et sous-répertoires)
+chmod -R 755 /mon/repertoire
+
+# Référence à un autre fichier utiliser les permissions d'un fichier avec autre
+chmod --reference=source.txt cible.txt
+
+# Mode verbeux
+chmod -v 755 fichier.sh
+```
+
+### 2. **chown** - Changer le Propriétaire
+```bash
+# Syntaxe de base
+chown [options] utilisateur[:groupe] fichier
+```
+
+#### **Exemples** :
+```bash
+# Changer le propriétaire
+chown alice fichier.txt
+
+# Changer propriétaire et groupe
+chown alice:developers script.sh
+
+# Changer uniquement le groupe
+chown :admins fichier.log
+
+# Récursif pour un répertoire
+chown -R alice:alice /home/alice/
+
+# Suivre les liens symboliques
+chown -h alice lien_symbolique
+```
+
+### 3. **chgrp** - Changer le Groupe
+```bash
+# Alternative à chown pour changer uniquement le groupe
+chgrp [options] groupe fichier
+```
+
+#### **Exemples** :
+```bash
+# Changer le groupe d'un fichier
+chgrp admins /var/log/system.log
+
+# Récursif
+chgrp -R www-data /var/www/html
+
+# Mode verbeux
+chgrp -v developers *.py
+```
+
+---
+
+## 📊 Tableau des Permissions Linux
+
+| Permission | Valeur | Fichier | Répertoire |
+|------------|--------|---------|------------|
+| **r** (4) | Lecture | Lire le contenu | Lister les fichiers |
+| **w** (2) | Écriture | Modifier le contenu | Créer/supprimer fichiers |
+| **x** (1) | Exécution | Exécuter le programme | Accéder au répertoire |
+
+### Exemples de combinaisons :
+
+| Valeur | Symbolique | Signification |
+|--------|------------|---------------|
+| **777** | `rwxrwxrwx` | Tout pour tous (risqué) |
+| **755** | `rwxr-xr-x` | Propriétaire complet, autres lecture/exécution |
+| **644** | `rw-r--r--` | Propriétaire R/W, autres lecture seulement |
+| **700** | `rwx------` | Propriétaire complet, autres rien |
+
+---
+
+## 🛡️ Bonnes Pratiques de Sécurité
+
+1. **Principe du moindre privilège** : Donner seulement les permissions nécessaires
+2. **Éviter le 777** : Jamais donner toutes permissions à tous
+3. **Scripts système** : Généralement en `755` (exécutable par tous)
+4. **Fichiers de configuration** : Généralement en `644` (modifiable seulement par propriétaire)
+5. **Répertoires** : Toujours besoin du `x` pour y accéder
+6. **Sticky bit sur /tmp** : `1777` permet à chacun de créer mais pas supprimer les fichiers des autres
+
+---
+
+## 🔍 Commandes Utiles pour Vérifier
+
+```bash
+# Voir les permissions détaillées
+ls -l fichier
+
+# Voir les permissions avec indicateurs
+ls -la
+
+# Voir le propriétaire et groupe
+stat fichier
+
+# Vérifier les permissions effectives d'un utilisateur
+sudo -u autre_utilisateur test -r fichier && echo "Peut lire"
+```
+
+## day4 write up
+# grant executable permissions
+- ssh tony@172.16.238.10
+- sudo chmod +x /tmp/xfusioncorp.sh
