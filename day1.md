@@ -826,4 +826,4 @@ sudo -u autre_utilisateur test -r fichier && echo "Peut lire"
 ## day4 write up
 # grant executable permissions
 - ssh tony@172.16.238.10
-- sudo chmod +x /tmp/xfusioncorp.sh
+- sudo chmod +xr /tmp/xfusioncorp.sh
